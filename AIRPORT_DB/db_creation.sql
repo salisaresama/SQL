@@ -1,6 +1,6 @@
 USE AIRPORT_DB;
 
--- Dropping tables
+-- Dropping tables and views
 
 DROP TABLE reservation;
 DROP TABLE flight_service;
@@ -23,7 +23,7 @@ CREATE TABLE airport
 	id INTEGER NOT NULL CHECK(id > 0),
 	airport_code CHAR(3) NOT NULL CHECK(airport_code NOT LIKE ' *' AND airport_code NOT LIKE '* ' AND airport_code <> ''),
 	country_code CHAR(3) NOT NULL CHECK(country_code NOT LIKE ' *' AND country_code NOT LIKE '* ' AND country_code <> ''),
-	flight_type VARCHAR(30) NOT NULL CHECK(flight_type NOT LIKE ' *' AND flight_type NOT LIKE '* ' AND flight_type <> ''),
+	airport_type VARCHAR(30) NOT NULL CHECK(airport_type NOT LIKE ' *' AND airport_type NOT LIKE '* ' AND airport_type <> ''),
 	city VARCHAR(50) CHECK(city NOT LIKE ' *' AND city NOT LIKE '* ' AND city <> ''),
 	PRIMARY KEY (id),
 	UNIQUE (airport_code)
@@ -33,6 +33,8 @@ CREATE TABLE flight
 (
 	id INTEGER NOT NULL CHECK(id > 0),
 	flight_number VARCHAR(10) NOT NULL CHECK(flight_number NOT LIKE ' *' AND flight_number NOT LIKE '* ' AND flight_number <> ''),
+	home_code CHAR(3) NOT NULL CHECK(home_code NOT LIKE ' *' AND home_code NOT LIKE '* ' AND home_code <> ''),
+	destination_code CHAR(3) NOT NULL CHECK(destination_code NOT LIKE ' *' AND destination_code NOT LIKE '* ' AND destination_code <> ''),
 	planned_departure_time TIME NOT NULL,
 	planned_arrival_time TIME NOT NULL,
 	PRIMARY KEY (id),
@@ -106,8 +108,8 @@ CREATE TABLE arrival
 	id INTEGER NOT NULL CHECK(id > 0),
 	id_flight INTEGER NOT NULL CHECK(id_flight > 0),
 	id_terminal INTEGER NOT NULL CHECK(id_terminal > 0),
-	expected_arrival_time TIME NOT NULL,
-	expected_arrival_date DATE NOT NULL,
+	expected_arrival_time DATETIME NOT NULL,
+	gate INTEGER CHECK(gate > 0),
 	PRIMARY KEY (id),
 	FOREIGN KEY (id_flight) REFERENCES flight(id) ON UPDATE CASCADE,
 	FOREIGN KEY (id_terminal) REFERENCES terminal(id) ON UPDATE CASCADE,
@@ -118,8 +120,8 @@ CREATE TABLE departure
 	id INTEGER NOT NULL CHECK(id > 0),
 	id_flight INTEGER NOT NULL CHECK(id_flight > 0),
 	id_terminal INTEGER NOT NULL CHECK(id_terminal > 0),
-	expected_departure_time TIME NOT NULL,
-	expected_departure_date DATE NOT NULL,
+	expected_departure_time DATETIME NOT NULL,
+	gate INTEGER CHECK(gate > 0),
 	PRIMARY KEY (id),
 	FOREIGN KEY (id_flight) REFERENCES flight(id) ON UPDATE CASCADE,
 	FOREIGN KEY (id_terminal) REFERENCES terminal(id) ON UPDATE CASCADE,
